@@ -1,0 +1,20 @@
+# Build folders are not neccessary for cloning project
+_ngo/
+_xmsgs/
+iseconfig/
+xlnx_auto_0_xdb/
+xst/
+
+#There are many files, let's just ignore them all, then create exceptions
+*
+!.gitignore
+!README.md
+
+#We want our verilog files
+!*.v
+
+#May as well include our bit file
+!*.bit
+
+#The ut file holds some useful configuration options including which startup clock to use
+!*.ut
