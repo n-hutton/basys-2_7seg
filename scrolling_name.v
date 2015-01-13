@@ -18,7 +18,6 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-`timescale 1ns / 1ps
 
 module scrolling_name(
 input clock,
@@ -33,7 +32,7 @@ output g,
 output dp,
 output [3:0] an,
 input [7:0] XPosition,
-input [7:0] YPosition
+input [7:0] YPosition 
 );
 
 reg [28:0] ticker; //to hold a count of 50M
@@ -68,7 +67,7 @@ end
 always@(posedge clock)
 begin
 fourth = XPosition[7:4]; 
-third = XPosition[3:0]; 
+third  = XPosition[3:0]; 
 
 second = YPosition[7:4]; 
 first = YPosition[3:0]; 
