@@ -13,6 +13,9 @@ xst/
 #Project file
 !*.xise
 
+#Need user constraints file
+!*.ucf
+
 #We want our verilog files
 !*.v
 
