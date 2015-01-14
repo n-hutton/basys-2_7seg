@@ -5,9 +5,9 @@
 // 
 // Create Date:    13:31:30 01/13/2015 
 // Design Name: 
-// Module Name:    digit_driver 
-// Project Name: 
-// Target Devices: 
+// Module Name:    	digit_driver 
+// Project Name: 		basys-2_7_segment
+// Target Devices: 	basys2 Spartan-3E 100k
 // Tool versions: 
 // Description: 
 //
@@ -19,114 +19,94 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module digit_driver(
-input CLK,
-input altClock,
-input [7:0] switches,
-output [7:0] Led,
-output reg [7:0] SegOut,
-output DpOut,
-output [3:0] AnOut
+        input CLK,
+        input [31:0] cyclesPerStrobe,
 
+        input [7:0] digitOne,
+        input [7:0] digitTwo,
+        input [7:0] digitThree,
+        input [7:0] digitFour,
 
+        output reg [6:0] SegOut,
+        output [3:0] AnOut,
+        output reg DpOut
 );
-	 
-reg [7:0] argh;
-reg [3:0] argh1;
-reg [3:0] argh2;
-reg [3:0] an_inverted;
 
-assign Led = argh;
-//assign Led = altClock;
+reg [3:0] an_inverted;
 assign AnOut = ~an_inverted;
 
-reg [28:0] ticker;
-reg altClock2;
-reg [30:0] tempSwitch;
+reg [31:0] ticker;
+reg tickerClock;
 
 always @ (posedge CLK)
 begin
-	tempSwitch <= (switches << 11);
-	
-	if(ticker >= tempSwitch) //reset after 1 second
-	begin
-		ticker <= 0;
-		if(altClock == 1)
-			altClock2 <= 1;
-	end
-	else
-	begin
-		ticker <= ticker + 1;
-		altClock2 <= 0;	
-	end
+    if(ticker >= cyclesPerStrobe) //reset after 1 second
+        begin
+            ticker <= 0;
+            tickerClock <= 1;
+        end
+        else
+        begin
+            ticker <= ticker + 1;
+            tickerClock <= 0;	
+        end
 end
 
-
-always @ (posedge altClock2)
+    
+    
+//We want our 7 segment display to strobe each digit at this speed
+always @ (posedge tickerClock)
 begin
 
-	
-	//argh[3:0] <= an_inverted;
-	//argh[7:4] <= argh[7:4] + 1;
-	//argh[ <= argh + 1;
-	
-	argh[3:0] <= argh1;
-	argh[7:4] <= argh2;
-	
-	argh1 <= an_inverted;
-	argh2 <= argh2 + 1;
-//	
-//	if(argh[3:0] <= 4'b1000)
-//	begin
-//		argh <= 0;
-//	end
-//	else
-//	begin
-//		argh <= argh + 1;
-//	end
-	
+    //Strobe across each of the segments
+    if(an_inverted == 4'b0)
+    begin
+        an_inverted <= 4'b0001;
+    end
+    else if(an_inverted >= 4'b1000)
+    begin
+        an_inverted <= 4'b0001;
+    end
+    else
+    begin
+        an_inverted <= an_inverted << 1;
+    end
+end
 
-	//Strobe across each of the segments
-	if(an_inverted == 4'b0)
-	begin
-		an_inverted <= 4'b0001;
-	end
-	else if(an_inverted >= 4'b1000)
-	begin
-		an_inverted <= 4'b0001;
-	end
-	else
-	begin
-		an_inverted <= an_inverted << 1;
-	end
-	
+always @ (negedge tickerClock)
+begin
+
 	case(an_inverted)
-	
-	4'b0001:
-	begin
-		SegOut <= 7'b0001110; //to display F
-	end
-	
-	4'b0010:
-	begin
-		SegOut <= 7'b0000011; //to display B;
-	end
-	
-	4'b0100:
-	begin
-		SegOut <= 7'b1000110; //to display C;
-	end
-	
-	4'b1000:
-	begin
-		SegOut <= 7'b0100001; //to display D
-	end
-	
-	default:
-	begin
-		SegOut <= 7'b1111111;//Display nothing
-		//argh[7:4] <= argh[7:4] + 1;
-	end
-	endcase
+
+        4'b1000:
+        begin
+            SegOut <= digitOne[6:0]; //to display F
+				DpOut <= digitOne[7];
+        end
+        
+        4'b0100:
+        begin
+            SegOut <= digitTwo[6:0]; //to display B; two
+				DpOut <= digitTwo[7];
+        end
+        
+        4'b0010:
+        begin
+            SegOut <= digitThree[6:0]; //to display C; three
+				DpOut <= digitThree[7];
+        end
+        
+        4'b0001:
+        begin
+            SegOut <= digitFour[6:0]; //to display D
+				DpOut <= digitFour[7];
+        end
+        
+        default:
+        begin
+            SegOut <= 7'b1111111;//Display nothing
+        end
+    endcase
 end
 
 endmodule

@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    22:19:05 01/12/2015 
+// Create Date:    11:08:05 01/14/2015 
 // Design Name: 
-// Module Name:    seven_seg_driver 
+// Module Name:    segment_translater 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -18,9 +18,13 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
+module segment_translater(
+input CLK
+//	output [7:0] digitOneTranslated,
+//	output [7:0] digitTwoTranslated,
+//	output [7:0] digitThreeTranslated,
+//	output [7:0] digitFourTranslated
+    );
 
-module seven_seg_driver(
-input clock
-);
 
 endmodule
